@@ -1,23 +1,40 @@
-console.log("web serverni boshlash");
-const exp = require("express");
-const app = exp();
-const router = require("./router")
+console.log("Web Serverni boshlash");
+const express = require("express");
+const app = express();
+const router = require("./router");
 
-// MongoDB choqirish
-const db = require('./server').db();
+let session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
+const store = new MongoDBStore({
+    uri: process.env.MONGO_URL,
+    collection: "session",
+})
 
-// 1) KIRISH code (use)
-app.use(exp.static('public'));
-app.use(exp.json());
-app.use(exp.urlencoded({ extended: true }));
+// 1:kirish code
+app.use(express.static("public"));
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
-// 2) SESSION code (?)
+// 2:session code
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        cookie: {
+            maxAge: 1000*60*30, // for 30 minutes
+        },
+        store: store,
+        resave: true,
+        saveUninitialized: true,
+    })
+)
 
-// 3) VIEWS code (set)
-app.set("views", "views");
-app.set("view engine", "ejs");
+// 3:views code
 
-// 4) ROUTING code (get, post)
-app.use("/", router);
+app.set("views","views");
+app.set("view engine","ejs");
+
+// 4:routing code
+// app.use("/resto", router.bssr);
+app.use("/",router);
 
 module.exports = app;

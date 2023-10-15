@@ -1,21 +1,34 @@
+const Member = require("../models/Member");
+
 let memberController = module.exports;
 
-memberController.home = (req, res) => {
-    console.log("GET cont.home user kirdi");
-    res.send("home sahifasidasiz");
-}
+memberController.signup = async (req,res) =>{
+    try{
+        console.log('POST: controller/signup ga USER kirdi!');
+        const data = req.body;
+        const member = new Member();
+        const new_member = await member.signupData(data);
 
-memberController.signup = (req, res) => {
-    console.log("POST cont.signup user kirdi");
-    res.send("signup sahifasidasiz");
-}
+        res.json({state: 'succeed', data: new_member});
+    } catch(err) {
+        console.log(`ERROR: controller/signup ga kirishda hatolik boldi! ${err.message}`);
+        res.json({state: 'neudachno', message: err.message});
+    }
+};
+memberController.login = async (req,res) =>{
+    try{
+        console.log('POST: controller/login ga USER kirdi!');
+        const data = req.body;
+        const member = new Member();
+        const result = await member.loginData(data);
 
-memberController.login = (req, res) => {
-    console.log("POST cont.login user kirdi");
-    res.send("login sahifasidasiz");
-}
-
-memberController.logout = (req, res) => {
-    console.log("GET cont.logout user kirdi");
-    res.send("logout sahifasidasiz");
-}
+        res.json({state: 'succeed', data: result});
+    } catch(err) {
+        console.log(`ERROR: controller/login ga kirishda hatolik boldi! ${err.message}`);
+        res.json({state: 'neudachno', message: err.message});
+    }
+};
+memberController.logout = (req,res) =>{
+    console.log("GET cont.logout");
+    res.send("logout sahifadasiz");
+};
