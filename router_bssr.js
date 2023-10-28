@@ -1,10 +1,6 @@
-// router filemizni ichida esa - expressni require qilib olishimiz kerak!
-// va turli hil routerlarni shakllantiramiz 
+const exp = require('express');
 
-const express = require('express');
-
-// expressning ichidan Routerni olib chiqamiz
-const router_bssr = express.Router();
+const router_bssr = exp.Router(); 
 const restaurantController = require("./controllers/restaurantController");
 const productController = require("./controllers/productController");
 const uploader_product = require('./utils/upload-multer')("products");
@@ -13,12 +9,13 @@ const uploader_product = require('./utils/upload-multer')("products");
  *                      BSSR(EJS uchun kerak bo'lgan router)                          *
  **************************************************************************************/
 
-// Bu yerda - RESTAURANT Controller bo'ladi, bu ham SERVICE MODELni ishlatadi ya'ni 'MEMBER'ni
+// HOME
+router_bssr.get("/",restaurantController.home);
 
 // SIGNUP
 router_bssr
-    .get("/signup",restaurantController.getSingupMyRestaurant)
-    .post("/signup", restaurantController.signupProcess);
+    .get("/sign-up",restaurantController.getSingupMyRestaurant)
+    .post("/sign-up", restaurantController.signupProcess);
 
 // LOGIN
 router_bssr
@@ -29,19 +26,22 @@ router_bssr
 router_bssr.get("/logout", restaurantController.logout);
 router_bssr.get("/check-me", restaurantController.checkSessions);
 
+// /PRODUCTS/MENU
+router_bssr.get("/products/menu",restaurantController.getMyRestaurantProducts); 
 
-router_bssr.get("/products/menu",restaurantController.getMyRestaurantData); // restaurantga tegishli bo'lgan productlarni ma'lumotlarini olib kelsin
-
+// /PRODUCTS/CREATE
 router_bssr.post(
     "/products/create", 
-    restaurantController.validateAuthRestaurant, // "only authenticated members with restaurant type"
-    uploader_product.array("product_images", 5), // 5tagacha
+    restaurantController.validateAuthRestaurant, 
+    uploader_product.array("product_images", 5), 
     productController.addNewProduct
 );
 
-router_bssr.post("/products/edit/:id", productController.updateChosenProduct);
+// /PRODUCTS/EDIT/:ID
+router_bssr.post(
+    "/products/edit/:id", 
+    restaurantController.validateAuthRestaurant,
+    productController.updateChosenProduct
+);
 
-// router_bssr.post("/products/edit");
-
-// hosil qilgan routerni export qiilb olamiz
-module.exports = router_bssr;
+module.exports = router_bssr; 
