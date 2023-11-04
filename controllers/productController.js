@@ -18,7 +18,7 @@ productController.addNewProduct = async (req, res) => {
     try{
         console.log('POST: addNewProductga kimdir kirdi!');
 
-        assert(req.files, Definer.general_err3);
+        assert.ok(req.files, Definer.general_err3);
 
         const product = new Product();
         let data = req.body;
@@ -31,7 +31,7 @@ productController.addNewProduct = async (req, res) => {
         const result = await product.addNewProductData(data, req.member);
 
         const html =`<script>
-                        alert(yangi taom muvaffaqiyatli qo'shildi);
+                        alert("yangi taom muvaffaqiyatli qo'shildi");
                         window.location.replace('/resto/products/menu');
                     </script>`
         res.end(html);
